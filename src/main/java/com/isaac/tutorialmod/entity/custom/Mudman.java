@@ -31,6 +31,7 @@ public class Mudman extends Monster implements IAnimatable {
     private AnimationFactory factory = new AnimationFactory(this);
 
     public Mudman(EntityType<? extends Monster> pEntityType, Level pLevel) {
+
         super(pEntityType, pLevel);
     }
 

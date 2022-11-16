@@ -14,6 +14,11 @@ public class MudmanModel extends AnimatedGeoModel<Mudman> {
 
     @Override
     public ResourceLocation getTextureResource(Mudman object){
-        return new ResourceLocation(TutorialMod.MOD_ID, "textures/entity/mudman_texture.png");
+        return new ResourceLocation(TutorialMod.MOD_ID, "textures/entity/mudman.png");
+    }
+
+    @Override
+    public ResourceLocation getAnimationResource(Mudman animatable) {
+        return new ResourceLocation(TutorialMod.MOD_ID, "animations/mudman.animation.json");
     }
 }
