@@ -5,12 +5,10 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Creeper;
@@ -18,6 +16,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -40,13 +39,16 @@ public class Mudman extends Monster implements IAnimatable {
                 .add(Attributes.MAX_HEALTH, 20.0D)
                 .add(Attributes.ATTACK_DAMAGE, 3.0f)
                 .add(Attributes.ATTACK_SPEED, 1.0f)
-                .add(Attributes.MOVEMENT_SPEED, 0.4f).build();
+                .add(Attributes.MOVEMENT_SPEED, 0.0f).build();
     }
+
+
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.2D, false));
+        this.goalSelector.addGoal(3, new MudmanPlacesDirt(this));
         this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 
@@ -56,13 +58,46 @@ public class Mudman extends Monster implements IAnimatable {
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Creeper.class, true));
     }
 
+    static class MudmanPlacesDirt extends Goal {
+        private final LivingEntity mudman;
+        private final Level level;
+        private int timeUntilNextPlacement = 0;
+
+        //public boolean canUse(){
+            //return true;
+        //}
+
+        public MudmanPlacesDirt(Monster mudman) {
+            this.mudman = mudman;
+            this.level = mudman.level;
+        }
+        public boolean canUse() {
+            return timeUntilNextPlacement-- <= 0;
+        }
+        @Override
+        public void tick() {
+            // Choose a random position within a certain range of the mob
+            BlockPos currentPos = this.mudman.blockPosition();
+            //int range = 5; // Change this value to adjust the range
+            //int x = currentPos.getX() + world.rand.nextInt(range * 2 + 1) - range;
+            //int y = currentPos.getY() + world.rand.nextInt(range * 2 + 1) - range;
+            //int z = currentPos.getZ() + world.rand.nextInt(range * 2 + 1) - range;
+            BlockPos targetPos = currentPos; //new BlockPos(x, y, z);
+
+            // Place a dirt block at the chosen position
+            Level level = this.mudman.level;
+            level.setBlock(targetPos, Blocks.DIRT.defaultBlockState(), 2);
+            timeUntilNextPlacement = 20;
+        }
+    }
+
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         if (event.isMoving()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.Mudman.walk", true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.mudman.walk", true));
             return PlayState.CONTINUE;
         }
 
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.Mudman.idle", true));
+        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.mudman.idle", true));
         return PlayState.CONTINUE;
     }
 
@@ -96,5 +131,7 @@ public class Mudman extends Monster implements IAnimatable {
     protected float getSoundVolume() {
         return 0.2F;
     }
+
+
 
 }
