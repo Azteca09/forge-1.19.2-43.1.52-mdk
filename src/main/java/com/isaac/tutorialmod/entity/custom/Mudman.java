@@ -44,7 +44,7 @@ public class Mudman extends Monster implements IAnimatable {
                 .add(Attributes.MAX_HEALTH, 20.0D)
                 .add(Attributes.ATTACK_DAMAGE, 3.0f)
                 .add(Attributes.ATTACK_SPEED, 1.0f)
-                .add(Attributes.MOVEMENT_SPEED, 0.0f).build();
+                .add(Attributes.MOVEMENT_SPEED, 0.3f).build();
     }
 
 
@@ -121,16 +121,19 @@ public class Mudman extends Monster implements IAnimatable {
 
             //FallingBlockEntity fallingBlock = new FallingBlockEntity(this.mudman.level, this.mudman.getX(), this.mudman.getY(), this.mudman.getZ(), Blocks.SAND.defaultBlockState());
 
-            FallingBlockEntity fallingBlock = new FallingBlockEntity(this.mudman.level, 0, 0, 10, sandBlock);
+            //FallingBlockEntity fallingBlock = new FallingBlockEntity(this.level, 0, 0, 10, sandBlock);
 
             // set the FallingBlockEntity's motion to move it along an arch-shaped path
             //fallingBlock.moveTo(this.mudman.getX(), this.mudman.getY()+10, this.mudman.getZ());
             //fallingBlock.setVelocity(0, 0.1, 0);
 
             // add the FallingBlockEntity to the world
+            /*
             this.mudman.level.addFreshEntity(fallingBlock);
-            t
-                    imeUntilNextPlacement = 20;
+
+                    timeUntilNextPlacement = 20;
+
+             */
         }
     }
 

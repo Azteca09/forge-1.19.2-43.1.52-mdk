@@ -2,6 +2,7 @@ package com.isaac.tutorialmod;
 
 import com.isaac.tutorialmod.entity.ModEntityTypes;
 import com.isaac.tutorialmod.entity.client.MudmanRenderer;
+import com.isaac.tutorialmod.entity.client.ToydogRenderer;
 
 import com.isaac.tutorialmod.item.ModItems;
 import com.mojang.logging.LogUtils;
@@ -44,7 +45,6 @@ public class TutorialMod
     {
         // Some common setup code
         LOGGER.info("HELLO FROM COMMON SETUP");
-        LOGGER.info("DIRT BLOCK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
@@ -55,6 +55,7 @@ public class TutorialMod
         public static void onClientSetup(FMLClientSetupEvent event)
         {
             EntityRenderers.register(ModEntityTypes.MUDMAN.get(), MudmanRenderer::new);
+            EntityRenderers.register(ModEntityTypes.TOYDOG.get(), ToydogRenderer::new);
         }
     }
 }

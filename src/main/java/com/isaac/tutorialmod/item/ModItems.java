@@ -13,10 +13,13 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, TutorialMod.MOD_ID);
 
-    public static final RegistryObject<Item> CHOMPER_SPAWN_EGG = ITEMS.register("mudman_spawn_egg",
+    public static final RegistryObject<Item> MUDMAN_SPAWN_EGG = ITEMS.register("mudman_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntityTypes.MUDMAN, 0x22b341, 0x19732e,
                     new Item.Properties().tab(ModCreativeModeTab.TUTORIAL_TAB)));
 
+    public static final RegistryObject<Item> TOYDOG_SPAWN_EGG = ITEMS.register("toydog_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntityTypes.TOYDOG, 0x22b341, 0x19732e,
+                    new Item.Properties().tab(ModCreativeModeTab.TUTORIAL_TAB)));
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }

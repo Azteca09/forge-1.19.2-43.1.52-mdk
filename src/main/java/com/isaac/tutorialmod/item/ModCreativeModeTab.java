@@ -7,7 +7,7 @@ public class ModCreativeModeTab {
     public static final CreativeModeTab TUTORIAL_TAB = new CreativeModeTab("tutorialtab") {
         @Override
         public ItemStack makeIcon() {
-            return new ItemStack(ModItems.CHOMPER_SPAWN_EGG.get());
+            return new ItemStack(ModItems.MUDMAN_SPAWN_EGG.get());
         }
     };
 }
