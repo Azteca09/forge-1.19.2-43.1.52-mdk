@@ -1,6 +1,7 @@
 package com.isaac.tutorialmod.entity.custom;
 
 //Template
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -19,6 +20,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.*;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Turtle;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Monster;
@@ -36,14 +38,19 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
+import java.util.EnumSet;
 import java.util.UUID;
 import java.util.function.Predicate;
 
 import com.isaac.tutorialmod.entity.ModEntityTypes;
 
+import javax.annotation.Nullable;
+
 public class Toydog extends TamableAnimal implements IAnimatable {
     private AnimationFactory factory = new AnimationFactory(this);
     private static final EntityDataAccessor<Boolean> SITTING = SynchedEntityData.defineId(Toydog.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> EXCITED = SynchedEntityData.defineId(Toydog.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> WAGGING = SynchedEntityData.defineId(Toydog.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_INTERESTED_ID = SynchedEntityData.defineId(Toydog.class, EntityDataSerializers.BOOLEAN);
     public static final Predicate<LivingEntity> PREY_SELECTOR = (p_30437_) -> {
         EntityType<?> entitytype = p_30437_.getType();
@@ -63,9 +70,14 @@ public class Toydog extends TamableAnimal implements IAnimatable {
                 .add(Attributes.MOVEMENT_SPEED, 0.3f).build();
     }
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        if (event.isMoving()) {
+        if (event.isMoving() && !this.isSitting()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.walk", true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.wagging",true));
             return PlayState.CONTINUE;
+        }
+        if(this.isExcited() && !this.isSitting()){
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.excited",true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.wagging",true));
         }
         if (this.isSitting()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.sitting", true));
@@ -94,6 +106,7 @@ public class Toydog extends TamableAnimal implements IAnimatable {
         this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false));
         this.goalSelector.addGoal(7, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(9, new ToydogAIBeg(this, 8.0F));
         //this.goalSelector.addGoal(9, new BegGoal(this, 8.0F));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
@@ -109,6 +122,8 @@ public class Toydog extends TamableAnimal implements IAnimatable {
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
+        this.entityData.define(WAGGING, false);
+        this.entityData.define(EXCITED, false);
         this.entityData.define(SITTING, false);
         this.entityData.define(DATA_INTERESTED_ID, false);
     }
@@ -127,7 +142,7 @@ public class Toydog extends TamableAnimal implements IAnimatable {
         ItemStack itemstack = player.getItemInHand(hand);
         Item item = itemstack.getItem();
         if (this.level.isClientSide) {
-            boolean flag = this.isOwnedBy(player) || this.isTame() || itemstack.is(Items.BONE) && !this.isTame();
+            boolean flag = this.isOwnedBy(player) || this.isTame() || itemstack.is(Items.STICK) && !this.isTame();
             return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
         } else {
             if (this.isTame()) {
@@ -154,7 +169,7 @@ public class Toydog extends TamableAnimal implements IAnimatable {
                     return interactionresult;
                 }
 
-            } else if (itemstack.is(Items.BONE)) {
+            } else if (itemstack.is(Items.STICK)) {
                 if (!player.getAbilities().instabuild) {
                     itemstack.shrink(1);
                 }
@@ -199,12 +214,24 @@ public class Toydog extends TamableAnimal implements IAnimatable {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("isSitting", this.isSitting());
     }
+    public boolean isExcited(){
+        return this.entityData.get(EXCITED);
+    }
+    public void setExcited(boolean excited){
+        this.entityData.set(EXCITED, excited);
+    }
     public boolean isSitting(){
         return this.entityData.get(SITTING);
     }
     public void setSitting(boolean sitting){
         this.entityData.set(SITTING, sitting);
         this.setOrderedToSit(sitting);
+    }
+    public boolean isWagging(){
+        return this.entityData.get(WAGGING);
+    }
+    public void setWagging(boolean wagging){
+        this.entityData.set(WAGGING, wagging);
     }
     public void setIsInterested(boolean p_30445_) {
         this.entityData.set(DATA_INTERESTED_ID, p_30445_);
@@ -223,5 +250,72 @@ public class Toydog extends TamableAnimal implements IAnimatable {
     //@Override
     public Team getteam(){
         return super.getTeam();
+    }
+
+    static class ToydogAIBeg extends Goal{
+
+        //private static final TargetingConditions ENTITY_PREDICATE = TargetingConditions.m_148353_().m_26883_(32.0);
+        protected final Toydog toydog;
+        @Nullable
+        private Player player;
+        private final Level level;
+        private final float lookDistance;
+        private int lookTime;
+        private final TargetingConditions begTargeting;
+
+        public ToydogAIBeg(Toydog toydog, float lookdistance) {
+            this.toydog = toydog;
+            this.level = toydog.level;
+            this.lookDistance = lookdistance;
+            this.begTargeting = TargetingConditions.forNonCombat().range((double)lookdistance);
+            this.setFlags(EnumSet.of(Goal.Flag.LOOK));
+        }
+
+        public boolean canUse() {
+            this.player = this.level.getNearestPlayer(this.begTargeting, this.toydog);
+            return this.player == null ? false : this.playerHoldingInteresting(this.player);
+        }
+
+        public boolean canContinueToUse() {
+            if (!this.player.isAlive()) {
+                return false;
+            } else if (this.toydog.distanceToSqr(this.player) > (double)(this.lookDistance * this.lookDistance)) {
+                return false;
+            } else {
+                return this.lookTime > 0 && this.playerHoldingInteresting(this.player);
+            }
+        }
+
+        public void start() {
+            this.toydog.setIsInterested(true);
+            this.toydog.setExcited(true);
+            this.lookTime = this.adjustedTickDelay(40 + this.toydog.getRandom().nextInt(40));
+        }
+
+        public void stop() {
+            this.toydog.setIsInterested(false);
+            this.toydog.setExcited(false); //CORRECT LATER
+            this.player = null;
+        }
+
+        public void tick() {
+            this.toydog.getLookControl().setLookAt(this.player.getX(), this.player.getEyeY(), this.player.getZ(), 10.0F, (float)this.toydog.getMaxHeadXRot());
+            --this.lookTime;
+        }
+
+        private boolean playerHoldingInteresting(Player player) {
+            for(InteractionHand interactionhand : InteractionHand.values()) {
+                ItemStack itemstack = player.getItemInHand(interactionhand);
+                if (this.toydog.isTame() && itemstack.is(Items.STICK)) {
+                    return true;
+                }
+
+                if (this.toydog.isFood(itemstack)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

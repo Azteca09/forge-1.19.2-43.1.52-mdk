@@ -5,6 +5,26 @@
 			"loop": true,
 			"animation_length": 6,
 			"bones": {
+				"bone": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"bone2": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
 				"bone4": {
 					"rotation": {
 						"0.0": {
@@ -101,19 +121,19 @@
 			}
 		},
 		"animation.toydog.attack": {
-			"loop": true
+			"animation_length": 12.25
 		},
 		"animation.toydog.sitting": {
 			"loop": "hold_on_last_frame",
 			"bones": {
 				"bone": {
 					"rotation": {
-						"vector": [-10.23397, 1.05627, -24.97911]
+						"vector": [0, 0, -25]
 					}
 				},
 				"bone2": {
 					"rotation": {
-						"vector": [-10.18465, 4.03948, 22.68249]
+						"vector": [0, 0, 25]
 					}
 				},
 				"leg3": {
@@ -167,6 +187,101 @@
 					},
 					"position": {
 						"vector": [0, -6, -3]
+					}
+				}
+			}
+		},
+		"animation.toydog.excited": {
+			"animation_length": 30.70833,
+			"bones": {
+				"head": {
+					"position": {
+						"vector": [0, -3, 3]
+					}
+				},
+				"leg3": {
+					"rotation": {
+						"vector": [-19.71975, 3.40487, 36.90804]
+					},
+					"position": {
+						"vector": [-1, -2, 1]
+					}
+				},
+				"leg4": {
+					"rotation": {
+						"vector": [-20.99511, 1.38846, -41.58031]
+					},
+					"position": {
+						"vector": [1, -2, 1]
+					}
+				},
+				"tail": {
+					"position": {
+						"vector": [0, 1, 0]
+					}
+				},
+				"leg2": {
+					"rotation": {
+						"0.0": {
+							"vector": [-7.5, 0, -10]
+						},
+						"30.7083": {
+							"vector": [0, 0, -10]
+						}
+					},
+					"position": {
+						"vector": [1, 0, 0]
+					}
+				},
+				"leg1": {
+					"rotation": {
+						"0.0": {
+							"vector": [-7.5, 0, 10]
+						},
+						"30.7083": {
+							"vector": [0, 0, 10]
+						}
+					},
+					"position": {
+						"vector": [-1, 0, 0]
+					}
+				},
+				"mane_rotation": {
+					"position": {
+						"vector": [0, -2, 3]
+					}
+				},
+				"body_rotation": {
+					"rotation": {
+						"vector": [22.5, 0, 0]
+					}
+				}
+			}
+		},
+		"animation.toydog.wagging": {
+			"loop": true,
+			"animation_length": 0.5,
+			"bones": {
+				"tail": {
+					"relative_to": {
+						"rotation": "entity"
+					},
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.125": {
+							"vector": [0, 0, -30]
+						},
+						"0.25": {
+							"vector": [0, 0, 0]
+						},
+						"0.375": {
+							"vector": [0, 0, 30]
+						},
+						"0.5": {
+							"vector": [0, 0, 0]
+						}
 					}
 				}
 			}
