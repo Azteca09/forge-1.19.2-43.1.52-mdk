@@ -71,13 +71,20 @@ public class Toydog extends TamableAnimal implements IAnimatable {
     }
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         if (event.isMoving() && !this.isSitting()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.walk", true));
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.wagging",true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.walk", true).addAnimation("animation.toydog.wagging",true));
+
             return PlayState.CONTINUE;
+/*
+            AnimationController controller = event.getController();
+                controller.addAnimation(new AnimationBuilder().addAnimation("animation.toydog.walk", true));
+                controller.addAnimation(new AnimationBuilder().addAnimation("animation.toydog.wagging", true));
+
+ */
         }
-        if(this.isExcited() && !this.isSitting()){
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.excited",true));
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.wagging",true));
+        if(this.isExcited() && !event.isMoving() && !this.isSitting()){
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.excited",true).addAnimation("animation.toydog.wagging",true));
+            //event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.wagging",true));
+            return PlayState.CONTINUE;
         }
         if (this.isSitting()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.sitting", true));
@@ -106,7 +113,7 @@ public class Toydog extends TamableAnimal implements IAnimatable {
         this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false));
         this.goalSelector.addGoal(7, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(9, new ToydogAIBeg(this, 8.0F));
+        this.goalSelector.addGoal(1, new ToydogAIBeg(this, 8.0F)); //FIX PRIORITY
         //this.goalSelector.addGoal(9, new BegGoal(this, 8.0F));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
@@ -233,8 +240,8 @@ public class Toydog extends TamableAnimal implements IAnimatable {
     public void setWagging(boolean wagging){
         this.entityData.set(WAGGING, wagging);
     }
-    public void setIsInterested(boolean p_30445_) {
-        this.entityData.set(DATA_INTERESTED_ID, p_30445_);
+    public void setIsInterested(boolean interested) {
+        this.entityData.set(DATA_INTERESTED_ID, interested);
     }
     public float getHeadRollAngle(float p_30449_) {
         return Mth.lerp(p_30449_, this.interestedAngleO, this.interestedAngle) * 0.15F * (float)Math.PI;
