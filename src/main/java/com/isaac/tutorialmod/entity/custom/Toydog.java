@@ -22,7 +22,11 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.*;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Turtle;
+import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -43,23 +47,20 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 import com.isaac.tutorialmod.entity.ModEntityTypes;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 
 public class Toydog extends TamableAnimal implements IAnimatable {
-    private AnimationFactory factory = new AnimationFactory(this);
+    private AnimationFactory factory = GeckoLibUtil.createFactory(this);//new AnimationFactory(this);
     private static final EntityDataAccessor<Boolean> SITTING = SynchedEntityData.defineId(Toydog.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> EXCITED = SynchedEntityData.defineId(Toydog.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> WAGGING = SynchedEntityData.defineId(Toydog.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_INTERESTED_ID = SynchedEntityData.defineId(Toydog.class, EntityDataSerializers.BOOLEAN);
-    public static final Predicate<LivingEntity> PREY_SELECTOR = (p_30437_) -> {
-        EntityType<?> entitytype = p_30437_.getType();
-        return entitytype == EntityType.SHEEP || entitytype == EntityType.RABBIT || entitytype == EntityType.FOX;
-    };
+
     public Toydog(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
     }
-
     private float interestedAngle;
     private float interestedAngleO;
     public static AttributeSupplier setAttributes() {
@@ -71,27 +72,20 @@ public class Toydog extends TamableAnimal implements IAnimatable {
     }
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         if (event.isMoving() && !this.isSitting()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.walk", true).addAnimation("animation.toydog.wagging",true));
-
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.walk").addAnimation("animation.toydog.wagging"));
             return PlayState.CONTINUE;
-/*
-            AnimationController controller = event.getController();
-                controller.addAnimation(new AnimationBuilder().addAnimation("animation.toydog.walk", true));
-                controller.addAnimation(new AnimationBuilder().addAnimation("animation.toydog.wagging", true));
-
- */
         }
         if(this.isExcited() && !event.isMoving() && !this.isSitting()){
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.excited",true).addAnimation("animation.toydog.wagging",true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.excited").addAnimation("animation.toydog.idle"));
             //event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.wagging",true));
             return PlayState.CONTINUE;
         }
         if (this.isSitting()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.sitting", true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.sitting"));
             return PlayState.CONTINUE;
         }
 
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.idle", true));
+        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.idle"));
         return PlayState.CONTINUE;
     }
     @Override
@@ -136,13 +130,12 @@ public class Toydog extends TamableAnimal implements IAnimatable {
     }
 
     public Toydog getBreedOffspring(ServerLevel level, AgeableMob ageableMob) {
-        Toydog toydog = ModEntityTypes.TOYDOG.get().create(level);
+        Toydog toydog = new Toydog(ModEntityTypes.TOYDOG.get(), level);
         UUID uuid = this.getOwnerUUID();
         if (uuid != null) {
             toydog.setOwnerUUID(uuid);
             toydog.setTame(true);
         }
-
         return toydog;
     }
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
@@ -185,7 +178,6 @@ public class Toydog extends TamableAnimal implements IAnimatable {
                     this.tame(player);
                     this.navigation.stop();
                     this.setTarget((LivingEntity)null);
-                    //this.setOrderedToSit(true);
                     setSitting(true);
                     this.level.broadcastEntityEvent(this, (byte)7);
                 } else {
@@ -234,18 +226,24 @@ public class Toydog extends TamableAnimal implements IAnimatable {
         this.entityData.set(SITTING, sitting);
         this.setOrderedToSit(sitting);
     }
-    public boolean isWagging(){
-        return this.entityData.get(WAGGING);
-    }
-    public void setWagging(boolean wagging){
-        this.entityData.set(WAGGING, wagging);
-    }
     public void setIsInterested(boolean interested) {
         this.entityData.set(DATA_INTERESTED_ID, interested);
     }
     public float getHeadRollAngle(float p_30449_) {
         return Mth.lerp(p_30449_, this.interestedAngleO, this.interestedAngle) * 0.15F * (float)Math.PI;
     }
+    public void tick() {
+        super.tick();
+        if (this.isAlive()) {
+            this.interestedAngleO = this.interestedAngle;
+            if (this.isExcited()) {
+                this.interestedAngle += (1.0F - this.interestedAngle) * 0.4F;
+            } else {
+                this.interestedAngle += (0.0F - this.interestedAngle) * 0.4F;
+            }
+        }
+    }
+
     protected SoundEvent getAmbientSound() {
         if (this.random.nextInt(3) == 0) {
             return this.isTame() && this.getHealth() < 10.0F ? SoundEvents.WOLF_WHINE : SoundEvents.WOLF_PANT;
@@ -254,11 +252,37 @@ public class Toydog extends TamableAnimal implements IAnimatable {
         }
     }
 
+    public float getTailAngle() {
+        return this.isTame() ? (2f*32.5f/360f + (this.getMaxHealth() - this.getHealth()) * 0.04F) * (float)Math.PI : 2f*32.5f*(float)Math.PI/360f;
+
+        //if (this.isAngry()) {  <--Isaac we dont have isAngry
+            //return 1.5393804F;
+            //return 1.5393804F;
+        //} else {
+            //return this.isTame() ? (0.55F - (this.getMaxHealth() - this.getHealth()) * 0.02F) * (float)Math.PI : ((float)Math.PI / 5F);
+        //}
+    }
+
     //@Override
     public Team getteam(){
         return super.getTeam();
     }
-
+    public boolean wantsToAttack(LivingEntity p_30389_, LivingEntity p_30390_) {
+        if (!(p_30389_ instanceof Creeper) && !(p_30389_ instanceof Ghast)) {
+            if (p_30389_ instanceof Wolf) {
+                Wolf wolf = (Wolf)p_30389_;
+                return !wolf.isTame() || wolf.getOwner() != p_30390_;
+            } else if (p_30389_ instanceof Player && p_30390_ instanceof Player && !((Player)p_30390_).canHarmPlayer((Player)p_30389_)) {
+                return false;
+            } else if (p_30389_ instanceof AbstractHorse && ((AbstractHorse)p_30389_).isTamed()) {
+                return false;
+            } else {
+                return !(p_30389_ instanceof TamableAnimal) || !((TamableAnimal)p_30389_).isTame();
+            }
+        } else {
+            return false;
+        }
+    }
     static class ToydogAIBeg extends Goal{
 
         //private static final TargetingConditions ENTITY_PREDICATE = TargetingConditions.m_148353_().m_26883_(32.0);
@@ -321,7 +345,6 @@ public class Toydog extends TamableAnimal implements IAnimatable {
                     return true;
                 }
             }
-
             return false;
         }
     }

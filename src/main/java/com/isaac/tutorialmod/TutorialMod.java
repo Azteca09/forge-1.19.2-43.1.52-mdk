@@ -1,11 +1,15 @@
 package com.isaac.tutorialmod;
 
+import com.isaac.tutorialmod.blocks.ModBlocks;
+import com.isaac.tutorialmod.blocks.entity.ModBlockEntityTypes;
+import com.isaac.tutorialmod.blocks.entity.client.ToydogFigureRenderer;
 import com.isaac.tutorialmod.entity.ModEntityTypes;
 import com.isaac.tutorialmod.entity.client.MudmanRenderer;
 import com.isaac.tutorialmod.entity.client.ToydogRenderer;
 
 import com.isaac.tutorialmod.item.ModItems;
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
@@ -29,14 +33,16 @@ public class TutorialMod
 
     public TutorialMod()
     {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        ModItems.register(modEventBus);
-        ModEntityTypes.register(modEventBus);
+        ModItems.ITEMS.register(eventBus);
+        ModBlocks.BLOCKS.register(eventBus);
+        ModBlockEntityTypes.TILES.register(eventBus);
+        ModEntityTypes.ENTITY_TYPES.register(eventBus);
 
         GeckoLib.initialize();
 
-        modEventBus.addListener(this::commonSetup);
+        eventBus.addListener(this::commonSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -56,6 +62,8 @@ public class TutorialMod
         {
             EntityRenderers.register(ModEntityTypes.MUDMAN.get(), MudmanRenderer::new);
             EntityRenderers.register(ModEntityTypes.TOYDOG.get(), ToydogRenderer::new);
+            //BlockEntityRenderers.register(ModBlockEntityTypes.TOYDOG_FIGURE_ENTITY.get(), ToydogFigureRenderer::new);
+            BlockEntityRenderers.register(ModBlockEntityTypes.TOYDOG_FIGURE.get(), ToydogFigureRenderer::new);
         }
     }
 }
