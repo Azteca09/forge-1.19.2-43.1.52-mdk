@@ -8,7 +8,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 public class ToydogFigureModel extends AnimatedGeoModel<ToydogFigureEntity> {
     @Override
     public ResourceLocation getModelResource(ToydogFigureEntity object){
-        return new ResourceLocation(TutorialMod.MOD_ID, "geo/toydog.geo.json");
+        return new ResourceLocation(TutorialMod.MOD_ID, "geo/toydog_figure.geo.json");
     }
 
     @Override

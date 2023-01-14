@@ -19,7 +19,7 @@ public class ModItems {
             DeferredRegister.create(ForgeRegistries.ITEMS, TutorialMod.MOD_ID);
     public static final RegistryObject<Item> GOLD_HEART = ITEMS.register("gold_heart",
             () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TUTORIAL_TAB)));
-    public static final RegistryObject<Item> TOYDOG_FIGURE_ITEM = ITEMS.register("toydog_figure",
+    public static final RegistryObject<Item> TOYDOG_FIGURE_ITEM = ITEMS.register("toydog_figure_item",
             () -> new BlockItem(ModBlocks.TOYDOG_FIGURE.get(),
                     new Item.Properties().tab(ModCreativeModeTab.TUTORIAL_TAB)));
     public static final RegistryObject<Item> MUDMAN_SPAWN_EGG = ITEMS.register("mudman_spawn_egg",

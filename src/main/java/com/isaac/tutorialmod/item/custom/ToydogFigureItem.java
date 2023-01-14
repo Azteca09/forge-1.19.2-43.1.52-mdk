@@ -28,9 +28,8 @@ public class ToydogFigureItem extends BlockItem implements IAnimatable {
         super.initializeClient(consumer);
         consumer.accept(new IClientItemExtensions() {
             private final BlockEntityWithoutLevelRenderer renderer = new ToydogFigureItemRenderer();
-            //@Override
-            public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
-                return renderer;
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                return this.renderer;
             }
         });
     }

@@ -3,7 +3,7 @@
   "entity.tutorialmod.mudman": "Mudman",
   "item.tutorialmod.gold_heart": "Heart o' Gold",
   "item.tutorialmod.toydog_figure_item": "Wooden Pet",
-  "item.tutorialmod.toydog_figure": "Wooden Pet",
+  "block.tutorialmod.toydog_figure": "Wooden Pet",
   "item.tutorialmod.mudman_spawn_egg": "Mudman Spawn Egg",
   "item.tutorialmod.toydog_spawn_egg": "Toydog Spawn Egg"
 }

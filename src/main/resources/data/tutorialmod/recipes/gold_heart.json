@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#W#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:gold_ingot"
+    },
+    "W": {
+      "item": "minecraft:amethyst_shard"
+    }
+  },
+  "result": {
+    "item": "tutorialmod:gold_heart"
+  }
+}

@@ -202,14 +202,13 @@ public class Toydog extends TamableAnimal implements IAnimatable {
 
         this.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4.0D);
     }
-    //@Override
-    public void readAdditionSaveData(CompoundTag tag){
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag){
         super.readAdditionalSaveData(tag);
         setSitting(tag.getBoolean("isSitting"));
     }
-
-    //@Override
-    public void setAdditionSaveData(CompoundTag tag){
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag){
         super.addAdditionalSaveData(tag);
         tag.putBoolean("isSitting", this.isSitting());
     }
