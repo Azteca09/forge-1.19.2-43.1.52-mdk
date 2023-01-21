@@ -5,6 +5,8 @@ import com.isaac.tutorialmod.blocks.entity.ModBlockEntityTypes;
 import com.isaac.tutorialmod.blocks.entity.client.ToydogFigureRenderer;
 import com.isaac.tutorialmod.entity.ModEntityTypes;
 import com.isaac.tutorialmod.entity.client.MudmanRenderer;
+import com.isaac.tutorialmod.entity.client.SalamanderModel;
+import com.isaac.tutorialmod.entity.client.SalamanderRenderer;
 import com.isaac.tutorialmod.entity.client.ToydogRenderer;
 
 import com.isaac.tutorialmod.item.ModItems;
@@ -62,7 +64,7 @@ public class TutorialMod
         {
             EntityRenderers.register(ModEntityTypes.MUDMAN.get(), MudmanRenderer::new);
             EntityRenderers.register(ModEntityTypes.TOYDOG.get(), ToydogRenderer::new);
-            //BlockEntityRenderers.register(ModBlockEntityTypes.TOYDOG_FIGURE_ENTITY.get(), ToydogFigureRenderer::new);
+            EntityRenderers.register(ModEntityTypes.SALAMANDER.get(), SalamanderRenderer::new);
             BlockEntityRenderers.register(ModBlockEntityTypes.TOYDOG_FIGURE.get(), ToydogFigureRenderer::new);
         }
     }

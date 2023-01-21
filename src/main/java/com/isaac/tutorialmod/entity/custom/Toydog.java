@@ -12,10 +12,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
@@ -52,7 +49,7 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 import javax.annotation.Nullable;
 
 public class Toydog extends TamableAnimal implements IAnimatable {
-    private AnimationFactory factory = GeckoLibUtil.createFactory(this);//new AnimationFactory(this);
+    private AnimationFactory factory = GeckoLibUtil.createFactory(this);
     private static final EntityDataAccessor<Boolean> SITTING = SynchedEntityData.defineId(Toydog.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> EXCITED = SynchedEntityData.defineId(Toydog.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> WAGGING = SynchedEntityData.defineId(Toydog.class, EntityDataSerializers.BOOLEAN);
@@ -70,6 +67,9 @@ public class Toydog extends TamableAnimal implements IAnimatable {
                 .add(Attributes.ATTACK_SPEED, 1.0f)
                 .add(Attributes.MOVEMENT_SPEED, 0.3f).build();
     }
+    public EntityDimensions getDimensions(Pose pPose) {
+        return super.getDimensions(pPose).scale(0.70f);// * (float)this.getSize());
+    }
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         if (event.isMoving() && !this.isSitting()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.walk").addAnimation("animation.toydog.wagging"));
@@ -77,7 +77,6 @@ public class Toydog extends TamableAnimal implements IAnimatable {
         }
         if(this.isExcited() && !event.isMoving() && !this.isSitting()){
             event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.excited").addAnimation("animation.toydog.idle"));
-            //event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.toydog.wagging",true));
             return PlayState.CONTINUE;
         }
         if (this.isSitting()) {
@@ -99,26 +98,20 @@ public class Toydog extends TamableAnimal implements IAnimatable {
     }
     public void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
-        //this.goalSelector.addGoal(1, new Wolf.WolfPanicGoal(1.5D));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-        //this.goalSelector.addGoal(3, new Wolf.WolfAvoidEntityGoal<>(this, Llama.class, 24.0F, 1.5D, 1.5D));
         this.goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
         this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
         this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false));
         this.goalSelector.addGoal(7, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(1, new ToydogAIBeg(this, 8.0F)); //FIX PRIORITY
-        //this.goalSelector.addGoal(9, new BegGoal(this, 8.0F));
+        this.goalSelector.addGoal(1, new ToydogAIBeg(this, 8.0F));
         this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         this.targetSelector.addGoal(3, (new HurtByTargetGoal(this)).setAlertOthers());
-        //this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
-        //this.targetSelector.addGoal(5, new NonTameRandomTargetGoal<>(this, Animal.class, false, PREY_SELECTOR));
         this.targetSelector.addGoal(6, new NonTameRandomTargetGoal<>(this, Turtle.class, false, Turtle.BABY_ON_LAND_SELECTOR));
         this.targetSelector.addGoal(7, new NearestAttackableTargetGoal<>(this, AbstractSkeleton.class, false));
-        //this.targetSelector.addGoal(8, new ResetUniversalAngerTargetGoal<>(this, true));
     }
     @Override
     protected void defineSynchedData() {

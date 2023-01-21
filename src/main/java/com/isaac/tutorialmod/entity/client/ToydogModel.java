@@ -35,8 +35,10 @@ public class ToydogModel extends AnimatedGeoModel<Toydog>{
         AnimationData manager = toydog.getFactory().getOrCreateAnimationData(instanceId);
 
         int unpausedMultiplier = Minecraft.getInstance().isPaused() && !manager.shouldPlayWhilePaused ? 0 : 1;
-        head.setRotationX(head.getRotationX() + extraData.headPitch * 0.017453292F * (float)unpausedMultiplier);
-        head.setRotationY(head.getRotationY() + extraData.netHeadYaw * 0.017453292F * (float)unpausedMultiplier);
+        //head.setRotationX(head.getRotationX() + extraData.headPitch * 0.017453292F * (float)unpausedMultiplier);
+        //head.setRotationY(head.getRotationY() + extraData.netHeadYaw * 0.017453292F * (float)unpausedMultiplier);
+        head.setRotationX(extraData.headPitch * 0.017453292F * (float)unpausedMultiplier);
+        head.setRotationY(extraData.netHeadYaw * 0.017453292F * (float)unpausedMultiplier);
 
         tail.setRotationX(toydog.getTailAngle());
     }

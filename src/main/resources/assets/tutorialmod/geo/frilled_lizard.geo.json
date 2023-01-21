@@ -1,0 +1,93 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "salamander",
+					"pivot": [0, 1, 0]
+				},
+				{
+					"name": "tail",
+					"parent": "salamander",
+					"pivot": [0, 7, 5],
+					"cubes": [
+						{"origin": [-1.5, 7, 5], "size": [3, 2, 9], "uv": [0, 14]}
+					]
+				},
+				{
+					"name": "leg1",
+					"parent": "salamander",
+					"pivot": [-2.5, 6, -4],
+					"cubes": [
+						{"origin": [-4.5, 0.5, -4], "size": [3, 5, 0], "uv": [0, 14]}
+					]
+				},
+				{
+					"name": "leg2",
+					"parent": "salamander",
+					"pivot": [2.5, 6, -4],
+					"cubes": [
+						{"origin": [1.5, 0.5, -4], "size": [3, 5, 0], "uv": [0, 14], "mirror": true}
+					]
+				},
+				{
+					"name": "leg3",
+					"parent": "salamander",
+					"pivot": [2.5, 6, 3],
+					"cubes": [
+						{"origin": [1.5, 0.5, 3], "size": [3, 5, 0], "uv": [0, 14], "mirror": true}
+					]
+				},
+				{
+					"name": "leg4",
+					"parent": "salamander",
+					"pivot": [-2.5, 6, 3],
+					"cubes": [
+						{"origin": [-4.5, 0.5, 3], "size": [3, 5, 0], "uv": [0, 14]}
+					]
+				},
+				{
+					"name": "body",
+					"parent": "salamander",
+					"pivot": [0, 7, 4],
+					"cubes": [
+						{"origin": [-3, 5, -5], "size": [6, 4, 10], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "head",
+					"parent": "salamander",
+					"pivot": [0, 9, -5],
+					"cubes": [
+						{"origin": [-2.5, 7, -11], "size": [5, 3, 6], "uv": [15, 14]}
+					]
+				},
+				{
+					"name": "frill1",
+					"parent": "head",
+					"pivot": [0, 9, -6],
+					"cubes": [
+						{"origin": [0, 4, -6], "size": [8, 10, 0], "uv": [22, 0]}
+					]
+				},
+				{
+					"name": "frill2",
+					"parent": "head",
+					"pivot": [0, 9, -6],
+					"cubes": [
+						{"origin": [-8, 4, -6], "size": [8, 10, 0], "uv": [22, 0], "mirror": true}
+					]
+				}
+			]
+		}
+	]
+}

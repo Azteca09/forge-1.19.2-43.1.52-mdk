@@ -2,6 +2,7 @@ package com.isaac.tutorialmod.entity;
 
 import com.isaac.tutorialmod.TutorialMod;
 import com.isaac.tutorialmod.entity.custom.Mudman;
+import com.isaac.tutorialmod.entity.custom.Salamander;
 import com.isaac.tutorialmod.entity.custom.Toydog;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -10,8 +11,6 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-
-import java.rmi.registry.Registry;
 
 public class ModEntityTypes {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
@@ -29,6 +28,11 @@ public class ModEntityTypes {
                             .sized(1.0f, 1.0f)
                             .build(new ResourceLocation(TutorialMod.MOD_ID, "toydog").toString()));
 
+    public static final RegistryObject<EntityType<Salamander>> SALAMANDER =
+            ENTITY_TYPES.register("salamander",
+                    () -> EntityType.Builder.of(Salamander::new, MobCategory.CREATURE)
+                            .sized(1.0f, 1.0f)
+                            .build(new ResourceLocation(TutorialMod.MOD_ID, "salamander").toString()));
     public static void register(IEventBus eventBus) {
 
         ENTITY_TYPES.register(eventBus);

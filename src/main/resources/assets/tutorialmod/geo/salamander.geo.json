@@ -1,0 +1,81 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 4,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "salamander",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "torso",
+					"pivot": [0, 6, 0]
+				},
+				{
+					"name": "head",
+					"parent": "torso",
+					"pivot": [0, 6, -5],
+					"cubes": [
+						{"origin": [-3, 4, -12], "size": [6, 4, 7], "uv": [20, 14]}
+					]
+				},
+				{
+					"name": "body",
+					"parent": "torso",
+					"pivot": [0, 6, -5],
+					"cubes": [
+						{"origin": [-4, 4, -5], "size": [8, 4, 10], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "leg1",
+					"parent": "torso",
+					"pivot": [-3.5, 5, 3],
+					"cubes": [
+						{"origin": [-5.5, 0, 3], "size": [3, 5, 0], "uv": [6, 14]}
+					]
+				},
+				{
+					"name": "leg2",
+					"parent": "torso",
+					"pivot": [3.5, 5, 3],
+					"cubes": [
+						{"origin": [2.5, 0, 3], "size": [3, 5, 0], "uv": [0, 5]}
+					]
+				},
+				{
+					"name": "leg3",
+					"parent": "torso",
+					"pivot": [-3.5, 5, -4],
+					"cubes": [
+						{"origin": [-5.5, 0, -4], "size": [3, 5, 0], "uv": [0, 14]}
+					]
+				},
+				{
+					"name": "leg4",
+					"parent": "torso",
+					"pivot": [3.5, 5, -4],
+					"cubes": [
+						{"origin": [2.5, 0, -4], "size": [3, 5, 0], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "tail",
+					"parent": "torso",
+					"pivot": [0, 6, 5],
+					"cubes": [
+						{"origin": [-2, 4, 5], "size": [4, 3, 12], "uv": [0, 14]}
+					]
+				}
+			]
+		}
+	]
+}

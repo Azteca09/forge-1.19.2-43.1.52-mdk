@@ -29,6 +29,9 @@ public class ModItems {
     public static final RegistryObject<Item> TOYDOG_SPAWN_EGG = ITEMS.register("toydog_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntityTypes.TOYDOG, 0x22b341, 0x19732e,
                     new Item.Properties().tab(ModCreativeModeTab.TUTORIAL_TAB)));
+    public static final RegistryObject<Item> SALAMANDER_SPAWN_EGG = ITEMS.register("salamander_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntityTypes.SALAMANDER, 0x22b341, 0x19732e,
+                    new Item.Properties().tab(ModCreativeModeTab.TUTORIAL_TAB)));
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }

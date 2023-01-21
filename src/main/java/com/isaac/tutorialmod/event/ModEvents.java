@@ -3,6 +3,7 @@ package com.isaac.tutorialmod.event;
 import com.isaac.tutorialmod.TutorialMod;
 import com.isaac.tutorialmod.entity.ModEntityTypes;
 import com.isaac.tutorialmod.entity.custom.Mudman;
+import com.isaac.tutorialmod.entity.custom.Salamander;
 import com.isaac.tutorialmod.entity.custom.Toydog;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -22,6 +23,7 @@ public class ModEvents {
         public static void entityAttributeEvent(EntityAttributeCreationEvent event) {
             event.put(ModEntityTypes.MUDMAN.get(), Mudman.setAttributes());
             event.put(ModEntityTypes.TOYDOG.get(), Toydog.setAttributes());
+            event.put(ModEntityTypes.SALAMANDER.get(), Salamander.setAttributes());
         }
 
     }

@@ -12,7 +12,6 @@ import net.minecraftforge.fml.common.Mod;
 public class ModEventClientBusEvents {
     @SubscribeEvent
     public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event){
-        //event.registerBlockEntityRenderer(ModBlockEntityTypes.TOYDOG_FIGURE_ENTITY.get(), ToydogFigureRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntityTypes.TOYDOG_FIGURE.get(), ToydogFigureRenderer::new);
     }
 }
