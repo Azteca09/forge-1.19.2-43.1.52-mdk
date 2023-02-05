@@ -2,6 +2,7 @@ package com.isaac.tutorialmod.entity.custom;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import com.isaac.tutorialmod.misc.TMTagRegistry;
 import com.mojang.math.Vector3f;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.core.BlockPos;
@@ -10,7 +11,6 @@ import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -24,16 +24,11 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
 import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
-import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.goal.target.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.AmphibiousPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
-import net.minecraft.world.entity.animal.Turtle;
-import net.minecraft.world.entity.animal.axolotl.Axolotl;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
@@ -59,9 +54,6 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
-import net.minecraftforge.fml.Logging;
 
 public class Salamander extends TamableAnimal implements IAnimatable {
 
@@ -72,14 +64,35 @@ public class Salamander extends TamableAnimal implements IAnimatable {
     public static final Ingredient TEMPTATION_ITEM = Ingredient.of(Items.SPIDER_EYE);
 
     public static final ImmutableList<? extends SensorType<? extends Sensor<? super Salamander>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_ADULT, SensorType.HURT_BY, SensorType.AXOLOTL_ATTACKABLES, SensorType.AXOLOTL_TEMPTATIONS);
-    protected static final ImmutableList<? extends MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.BREED_TARGET, MemoryModuleType.NEAREST_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.NEAREST_VISIBLE_PLAYER, MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER, MemoryModuleType.LOOK_TARGET, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, MemoryModuleType.PATH, MemoryModuleType.ATTACK_TARGET, MemoryModuleType.ATTACK_COOLING_DOWN, MemoryModuleType.NEAREST_VISIBLE_ADULT, MemoryModuleType.HURT_BY_ENTITY, MemoryModuleType.PLAY_DEAD_TICKS, MemoryModuleType.NEAREST_ATTACKABLE, MemoryModuleType.TEMPTING_PLAYER, MemoryModuleType.TEMPTATION_COOLDOWN_TICKS, MemoryModuleType.IS_TEMPTED, MemoryModuleType.HAS_HUNTING_COOLDOWN, MemoryModuleType.IS_PANICKING);
+    protected static final ImmutableList<? extends MemoryModuleType<?>> MEMORY_TYPES =
+            ImmutableList.of(
+                    MemoryModuleType.BREED_TARGET,
+                    MemoryModuleType.NEAREST_LIVING_ENTITIES,
+                    MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES,
+                    MemoryModuleType.NEAREST_VISIBLE_PLAYER,
+                    MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER,
+                    MemoryModuleType.LOOK_TARGET,
+                    MemoryModuleType.WALK_TARGET,
+                    MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE,
+                    MemoryModuleType.PATH,
+                    MemoryModuleType.ATTACK_TARGET,
+                    MemoryModuleType.ATTACK_COOLING_DOWN,
+                    MemoryModuleType.NEAREST_VISIBLE_ADULT,
+                    MemoryModuleType.HURT_BY_ENTITY,
+                    MemoryModuleType.PLAY_DEAD_TICKS,
+                    MemoryModuleType.NEAREST_ATTACKABLE,
+                    MemoryModuleType.TEMPTING_PLAYER,
+                    MemoryModuleType.TEMPTATION_COOLDOWN_TICKS,
+                    MemoryModuleType.IS_TEMPTED,
+                    MemoryModuleType.HAS_HUNTING_COOLDOWN,
+                    MemoryModuleType.IS_PANICKING);
     public static final double PLAYER_FIRE_PROTECTION_DETECTION_RANGE = 20.0D;
     private static final int SALAMANDER_TOTAL_AIR_SUPPLY = 6000;
     private static final int REHYDRATE_AIR_SUPPLY = 1800;
     private static final int FIRE_PROTECTION_BUFF_MAX_DURATION = 2400;
 
     private boolean isMovingOnLand() {
-        return this.onGround && this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-6D && !this.isInWaterOrBubble();
+        return this.onGround && this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-8D && !this.isInWaterOrBubble();
     }
 
     private boolean isMovingInWater() {
@@ -171,11 +184,6 @@ public class Salamander extends TamableAnimal implements IAnimatable {
             //this.setPlayingDead(optional.isPresent() && optional.get() > 0);
         //}
     }
-    /*
-    public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 14.0D).add(Attributes.MOVEMENT_SPEED, 1.0D).add(Attributes.ATTACK_DAMAGE, 2.0D);
-    }
-     */
     public static AttributeSupplier setAttributes() {
         return TamableAnimal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 14.0D)
@@ -275,7 +283,12 @@ public class Salamander extends TamableAnimal implements IAnimatable {
         }
     }
     public static boolean checkSalamanderSpawnRules(EntityType<? extends LivingEntity> pSalamander, ServerLevelAccessor pLevel, MobSpawnType pSpawnType, BlockPos pPos, RandomSource pRandom) {
-        return pLevel.getBlockState(pPos.below()).is(BlockTags.AXOLOTLS_SPAWNABLE_ON);
+        System.out.println("tried spawning salamander");
+        boolean spawnBlock = pLevel.getBlockState(pPos.below()).is(TMTagRegistry.SALAMANDER_SPAWNABLE_ON);
+        if (spawnBlock){
+            System.out.println(pPos);
+        }
+        return spawnBlock;
     }
     class SalamanderLookControl extends SmoothSwimmingLookControl {
         public SalamanderLookControl(Salamander pSalamander, int pMaxYRotFromCenter) {
@@ -299,30 +312,13 @@ public class Salamander extends TamableAnimal implements IAnimatable {
         //this.entityData.define(DATA_INTERESTED_ID, false);
     }
 
-
-    /*public void registerGoals() {
-        this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-        this.goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
-        this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
-        this.goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.0D, 10.0F, 2.0F, false));
-        this.goalSelector.addGoal(7, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, (new HurtByTargetGoal(this)).setAlertOthers());
-        this.targetSelector.addGoal(6, new NonTameRandomTargetGoal<>(this, Turtle.class, false, Turtle.BABY_ON_LAND_SELECTOR));
-        this.targetSelector.addGoal(7, new NearestAttackableTargetGoal<>(this, AbstractSkeleton.class, false));
-    }
-
-     */
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         //System.out.println(event.isMoving());
         if(this.isMovingOnLand()) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.salamander.walk"));
-            return PlayState.CONTINUE;
-        }else{
+        } else if (this.isMovingInWater()) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.salamander.swim"));
+        } else {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.salamander.idle"));
         }
         return PlayState.CONTINUE;
@@ -367,7 +363,7 @@ public class Salamander extends TamableAnimal implements IAnimatable {
                         //setSitting(!isSitting());
                         this.jumping = false;
                         this.navigation.stop();
-                        this.setTarget((LivingEntity)null);
+                        //this.setTarget((LivingEntity)null);
                         return InteractionResult.SUCCESS;
                     }
 
@@ -382,7 +378,7 @@ public class Salamander extends TamableAnimal implements IAnimatable {
                 if (this.random.nextInt(3) == 0 && !ForgeEventFactory.onAnimalTame(this, player)) {
                     this.tame(player);
                     this.navigation.stop();
-                    this.setTarget((LivingEntity)null);
+                    //this.setTarget((LivingEntity)null);
                     //setSitting(true);
                     this.level.broadcastEntityEvent(this, (byte)7);
                 } else {

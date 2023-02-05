@@ -13,6 +13,9 @@ import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import javax.annotation.Nullable;
 
 public class ToydogRenderer extends GeoEntityRenderer<Toydog> {
+    private static final ResourceLocation TOYDOG_LOCATION = new ResourceLocation("textures/entity/toydog.png");
+    private static final ResourceLocation TOYDOG_TAME_LOCATION = new ResourceLocation("textures/entity/toydog_tamed.png");
+    private static final ResourceLocation TOYDOG_EFFECT_LOCATION = new ResourceLocation("textures/entity/toydog_glowing.png");
 
     public ToydogRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new ToydogModel());
@@ -20,8 +23,14 @@ public class ToydogRenderer extends GeoEntityRenderer<Toydog> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(Toydog instance){
-        return new ResourceLocation(TutorialMod.MOD_ID, "textures/entity/toydog.png");
+    public ResourceLocation getTextureLocation(Toydog pEntity){
+        if (pEntity.isGlowing()){
+            System.out.println("glowing");
+            return TOYDOG_EFFECT_LOCATION;
+        }else{
+            System.out.println("other");
+            return pEntity.isTame() ? TOYDOG_TAME_LOCATION : TOYDOG_LOCATION;
+        }
     }
 
     @Override

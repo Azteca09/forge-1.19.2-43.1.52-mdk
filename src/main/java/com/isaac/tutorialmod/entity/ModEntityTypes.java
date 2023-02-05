@@ -24,7 +24,7 @@ public class ModEntityTypes {
 
     public static final RegistryObject<EntityType<Toydog>> TOYDOG =
             ENTITY_TYPES.register("toydog",
-                    () -> EntityType.Builder.of(Toydog::new, MobCategory.CREATURE)
+                    () -> EntityType.Builder.of(Toydog::new, MobCategory.AMBIENT)
                             .sized(1.0f, 1.0f)
                             .build(new ResourceLocation(TutorialMod.MOD_ID, "toydog").toString()));
 

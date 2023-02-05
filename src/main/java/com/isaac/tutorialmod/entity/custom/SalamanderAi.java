@@ -38,15 +38,46 @@ public class SalamanderAi {
         return pBrain;
     }
     private static void initFightActivity(Brain<Salamander> pBrain) {
-        pBrain.addActivityAndRemoveMemoryWhenStopped(Activity.FIGHT, 0, ImmutableList.of(new StopAttackingIfTargetInvalid<>(Salamander::onStopAttacking), new SetWalkTargetFromAttackTargetIfTargetOutOfReach(SalamanderAi::getSpeedModifierChasing), new MeleeAttack(20), new EraseMemoryIf<Salamander>(BehaviorUtils::isBreeding, MemoryModuleType.ATTACK_TARGET)), MemoryModuleType.ATTACK_TARGET);
+        pBrain.addActivityAndRemoveMemoryWhenStopped(Activity.FIGHT, 0,
+                ImmutableList.of(
+                        new StopAttackingIfTargetInvalid<>(Salamander::onStopAttacking),
+                        new SetWalkTargetFromAttackTargetIfTargetOutOfReach(SalamanderAi::getSpeedModifierChasing),
+                        new MeleeAttack(20),
+                        new EraseMemoryIf<Salamander>(
+                                BehaviorUtils::isBreeding,
+                                MemoryModuleType.ATTACK_TARGET)),
+                MemoryModuleType.ATTACK_TARGET);
     }
 
     private static void initCoreActivity(Brain<Salamander> pBrain) {
-        pBrain.addActivity(Activity.CORE, 0, ImmutableList.of(new LookAtTargetSink(45, 90), new MoveToTargetSink(), new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS)));
+        pBrain.addActivity(Activity.CORE, 0,
+                ImmutableList.of(
+                        new LookAtTargetSink(45, 90),
+                        new MoveToTargetSink(),
+                        new CountDownCooldownTicks(MemoryModuleType.TEMPTATION_COOLDOWN_TICKS)));
     }
 
     private static void initIdleActivity(Brain<Salamander> pBrain) {
-        pBrain.addActivity(Activity.IDLE, ImmutableList.of(Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F), UniformInt.of(30, 60))), Pair.of(1, new AnimalMakeLove(ModEntityTypes.SALAMANDER.get(), 0.2F)), Pair.of(2, new RunOne<>(ImmutableList.of(Pair.of(new FollowTemptation(SalamanderAi::getSpeedModifier), 1), Pair.of(new BabyFollowAdult<>(ADULT_FOLLOW_RANGE, SalamanderAi::getSpeedModifierFollowingAdult), 1)))), Pair.of(3, new StartAttacking<>(SalamanderAi::findNearestValidAttackTarget)), Pair.of(3, new TryFindWater(6, 0.25F)), Pair.of(4, new GateBehavior<>(ImmutableMap.of(MemoryModuleType.WALK_TARGET, MemoryStatus.VALUE_ABSENT), ImmutableSet.of(), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.TRY_ALL, ImmutableList.of(Pair.of(new RandomSwim(0.5F), 2), Pair.of(new RandomStroll(0.15F, false), 2), Pair.of(new SetWalkTargetFromLookTarget(SalamanderAi::canSetWalkTargetFromLookTarget, SalamanderAi::getSpeedModifier, 3), 3), Pair.of(new RunIf<>(Entity::isInWaterOrBubble, new DoNothing(30, 60)), 5), Pair.of(new RunIf<>(Entity::isOnGround, new DoNothing(200, 400)), 5))))));
+        pBrain.addActivity(
+                Activity.IDLE,
+                ImmutableList.of(Pair.of(0,
+                        new RunSometimes<>(new SetEntityLookTarget(EntityType.PLAYER, 6.0F),
+                                UniformInt.of(30, 60))),
+                        Pair.of(1, new AnimalMakeLove(ModEntityTypes.SALAMANDER.get(), 0.2F)),
+                        Pair.of(2, new RunOne<>(ImmutableList.of(Pair.of(new FollowTemptation(SalamanderAi::getSpeedModifier), 1),
+                                Pair.of(new BabyFollowAdult<>(ADULT_FOLLOW_RANGE, SalamanderAi::getSpeedModifierFollowingAdult), 1)))),
+                        Pair.of(3, new StartAttacking<>(SalamanderAi::findNearestValidAttackTarget)),
+                        Pair.of(3, new TryFindWater(6, 0.25F)),
+                        Pair.of(4, new GateBehavior<>(ImmutableMap.of(MemoryModuleType.WALK_TARGET, MemoryStatus.VALUE_ABSENT),
+                                ImmutableSet.of(),
+                                GateBehavior.OrderPolicy.ORDERED,
+                                GateBehavior.RunningPolicy.TRY_ALL,
+                                ImmutableList.of(
+                                        Pair.of(new RandomSwim(0.5F), 2),
+                                        Pair.of(new RandomStroll(0.15F, true), 2), //updated to let salamander stroll from water
+                                        Pair.of(new SetWalkTargetFromLookTarget(SalamanderAi::canSetWalkTargetFromLookTarget, SalamanderAi::getSpeedModifier, 3), 3),
+                                        Pair.of(new RunIf<>(Entity::isInWaterOrBubble, new DoNothing(30, 60)), 5),
+                                        Pair.of(new RunIf<>(Entity::isOnGround, new DoNothing(200, 400)), 5))))));
     }
     private static boolean canSetWalkTargetFromLookTarget(LivingEntity p_182381_) {
         Level level = p_182381_.level;

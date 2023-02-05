@@ -12,6 +12,9 @@ import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 public class ToydogModel extends AnimatedGeoModel<Toydog>{
+    private static final ResourceLocation TOYDOG_LOCATION = new ResourceLocation("textures/entity/toydog.png");
+    private static final ResourceLocation TOYDOG_TAME_LOCATION = new ResourceLocation("textures/entity/toydog_tamed.png");
+    private static final ResourceLocation TOYDOG_EFFECT_LOCATION = new ResourceLocation("textures/entity/toydog_glowing.png");
     @Override
     public ResourceLocation getModelResource(Toydog object){
         return new ResourceLocation(TutorialMod.MOD_ID, "geo/toydog.geo.json");
@@ -19,7 +22,12 @@ public class ToydogModel extends AnimatedGeoModel<Toydog>{
 
     @Override
     public ResourceLocation getTextureResource(Toydog object){
-        return new ResourceLocation(TutorialMod.MOD_ID, "textures/entity/toydog.png");
+        //return new ResourceLocation(TutorialMod.MOD_ID, "textures/entity/toydog_tamed.png");
+        if (object.isGlowing()){
+            return TOYDOG_EFFECT_LOCATION;
+        }else{
+            return object.isTame() ? TOYDOG_TAME_LOCATION : TOYDOG_LOCATION;
+        }
     }
 
     @Override
@@ -35,8 +43,6 @@ public class ToydogModel extends AnimatedGeoModel<Toydog>{
         AnimationData manager = toydog.getFactory().getOrCreateAnimationData(instanceId);
 
         int unpausedMultiplier = Minecraft.getInstance().isPaused() && !manager.shouldPlayWhilePaused ? 0 : 1;
-        //head.setRotationX(head.getRotationX() + extraData.headPitch * 0.017453292F * (float)unpausedMultiplier);
-        //head.setRotationY(head.getRotationY() + extraData.netHeadYaw * 0.017453292F * (float)unpausedMultiplier);
         head.setRotationX(extraData.headPitch * 0.017453292F * (float)unpausedMultiplier);
         head.setRotationY(extraData.netHeadYaw * 0.017453292F * (float)unpausedMultiplier);
 

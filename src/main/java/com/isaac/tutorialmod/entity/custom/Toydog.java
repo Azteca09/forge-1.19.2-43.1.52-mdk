@@ -54,12 +54,13 @@ public class Toydog extends TamableAnimal implements IAnimatable {
     private static final EntityDataAccessor<Boolean> EXCITED = SynchedEntityData.defineId(Toydog.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> WAGGING = SynchedEntityData.defineId(Toydog.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_INTERESTED_ID = SynchedEntityData.defineId(Toydog.class, EntityDataSerializers.BOOLEAN);
-
     public Toydog(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
     }
     private float interestedAngle;
     private float interestedAngleO;
+    private boolean isGlowing;
+    private int glowDir;
     public static AttributeSupplier setAttributes() {
         return Monster.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0D)
@@ -68,7 +69,7 @@ public class Toydog extends TamableAnimal implements IAnimatable {
                 .add(Attributes.MOVEMENT_SPEED, 0.3f).build();
     }
     public EntityDimensions getDimensions(Pose pPose) {
-        return super.getDimensions(pPose).scale(0.70f);// * (float)this.getSize());
+        return super.getDimensions(pPose).scale(0.70f);
     }
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
         if (event.isMoving() && !this.isSitting()) {
@@ -155,7 +156,7 @@ public class Toydog extends TamableAnimal implements IAnimatable {
                         setSitting(!isSitting());
                         this.jumping = false;
                         this.navigation.stop();
-                        this.setTarget((LivingEntity)null);
+                        //this.setTarget((LivingEntity)null);
                         return InteractionResult.SUCCESS;
                     }
 
@@ -170,7 +171,7 @@ public class Toydog extends TamableAnimal implements IAnimatable {
                 if (this.random.nextInt(3) == 0 && !ForgeEventFactory.onAnimalTame(this, player)) {
                     this.tame(player);
                     this.navigation.stop();
-                    this.setTarget((LivingEntity)null);
+                    //this.setTarget((LivingEntity)null);
                     setSitting(true);
                     this.level.broadcastEntityEvent(this, (byte)7);
                 } else {
@@ -184,9 +185,9 @@ public class Toydog extends TamableAnimal implements IAnimatable {
             return super.mobInteract(player, hand);
         }
     }
-    public void setTame(boolean p_30443_) {
-        super.setTame(p_30443_);
-        if (p_30443_) {
+    public void setTame(boolean pTamed) {
+        super.setTame(pTamed);
+        if (pTamed) {
             this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0D);
             this.setHealth(20.0F);
         } else {
@@ -224,18 +225,6 @@ public class Toydog extends TamableAnimal implements IAnimatable {
     public float getHeadRollAngle(float p_30449_) {
         return Mth.lerp(p_30449_, this.interestedAngleO, this.interestedAngle) * 0.15F * (float)Math.PI;
     }
-    public void tick() {
-        super.tick();
-        if (this.isAlive()) {
-            this.interestedAngleO = this.interestedAngle;
-            if (this.isExcited()) {
-                this.interestedAngle += (1.0F - this.interestedAngle) * 0.4F;
-            } else {
-                this.interestedAngle += (0.0F - this.interestedAngle) * 0.4F;
-            }
-        }
-    }
-
     protected SoundEvent getAmbientSound() {
         if (this.random.nextInt(3) == 0) {
             return this.isTame() && this.getHealth() < 10.0F ? SoundEvents.WOLF_WHINE : SoundEvents.WOLF_PANT;
@@ -255,24 +244,50 @@ public class Toydog extends TamableAnimal implements IAnimatable {
         //}
     }
 
-    //@Override
-    public Team getteam(){
+    @Override
+    public Team getTeam(){
         return super.getTeam();
     }
-    public boolean wantsToAttack(LivingEntity p_30389_, LivingEntity p_30390_) {
-        if (!(p_30389_ instanceof Creeper) && !(p_30389_ instanceof Ghast)) {
-            if (p_30389_ instanceof Wolf) {
-                Wolf wolf = (Wolf)p_30389_;
-                return !wolf.isTame() || wolf.getOwner() != p_30390_;
-            } else if (p_30389_ instanceof Player && p_30390_ instanceof Player && !((Player)p_30390_).canHarmPlayer((Player)p_30389_)) {
+    public boolean wantsToAttack(LivingEntity pTarget, LivingEntity pOwner) {
+        if (!(pTarget instanceof Creeper) && !(pTarget instanceof Ghast)) {
+            if (pTarget instanceof Wolf) {
+                Wolf wolf = (Wolf)pTarget;
+                return !wolf.isTame() || wolf.getOwner() != pOwner;
+            } else if (pTarget instanceof Player && pOwner instanceof Player && !((Player)pOwner).canHarmPlayer((Player)pTarget)) {
                 return false;
-            } else if (p_30389_ instanceof AbstractHorse && ((AbstractHorse)p_30389_).isTamed()) {
+            } else if (pTarget instanceof AbstractHorse && ((AbstractHorse)pTarget).isTamed()) {
                 return false;
             } else {
-                return !(p_30389_ instanceof TamableAnimal) || !((TamableAnimal)p_30389_).isTame();
+                return !(pTarget instanceof TamableAnimal) || !((TamableAnimal)pTarget).isTame();
             }
         } else {
             return false;
+        }
+    }
+    public boolean isGlowing() { return this.isGlowing; }
+    private int maxGlowDuration(){ return 20; }
+    /*public void thunderHit(ServerLevel pLevel, LightningBolt pLightning) {
+        super.thunderHit(pLevel, pLightning);
+        this.isGlowing = true;
+        this.glowDir = 0;
+    }
+
+     */
+    public void tick() {
+        super.tick();
+        if (this.isAlive()) {
+            if(this.isGlowing){
+                this.glowDir += 1;
+                if (this.glowDir > this.maxGlowDuration()){
+                    this.isGlowing = false;
+                }
+            }
+            this.interestedAngleO = this.interestedAngle;
+            if (this.isExcited()) {
+                this.interestedAngle += (1.0F - this.interestedAngle) * 0.4F;
+            } else {
+                this.interestedAngle += (0.0F - this.interestedAngle) * 0.4F;
+            }
         }
     }
     static class ToydogAIBeg extends Goal{
@@ -298,7 +313,7 @@ public class Toydog extends TamableAnimal implements IAnimatable {
             this.player = this.level.getNearestPlayer(this.begTargeting, this.toydog);
             return this.player == null ? false : this.playerHoldingInteresting(this.player);
         }
-
+e
         public boolean canContinueToUse() {
             if (!this.player.isAlive()) {
                 return false;
@@ -325,7 +340,6 @@ public class Toydog extends TamableAnimal implements IAnimatable {
             this.toydog.getLookControl().setLookAt(this.player.getX(), this.player.getEyeY(), this.player.getZ(), 10.0F, (float)this.toydog.getMaxHeadXRot());
             --this.lookTime;
         }
-
         private boolean playerHoldingInteresting(Player player) {
             for(InteractionHand interactionhand : InteractionHand.values()) {
                 ItemStack itemstack = player.getItemInHand(interactionhand);

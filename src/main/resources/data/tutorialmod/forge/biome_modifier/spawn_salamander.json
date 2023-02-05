@@ -1,0 +1,17 @@
+{
+  "type": "forge:add_spawns",
+  "biomes": [
+    "minecraft:plains",
+    "minecraft:old_growth_pine_taiga",
+    "minecraft:old_growth_spruce_taiga",
+    "minecraft:desert",
+    "minecraft:mangrove_swamp",
+    "minecraft:swamp"
+  ],
+  "spawners": {
+    "type": "tutorialmod:salamander",
+    "weight": 150,
+    "minCount": 3,
+    "maxCount": 5
+  }
+}
